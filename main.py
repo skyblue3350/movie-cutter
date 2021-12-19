@@ -48,6 +48,7 @@ if __name__ == "__main__":
 
 
     f = open(args.movie.with_suffix(".txt"), "w")
+    index = timedelta(seconds=0)
     for line in args.chapter_file.open("r"):
         s = line.split()
         if 3 > len(s):
@@ -65,5 +66,10 @@ if __name__ == "__main__":
         if args.yes:
             stream = stream.overwrite_output()
 
-        f.write(f"{s[0]} {s[2]}\n")
+        hours, rem = divmod(index.seconds, 3600)
+        minutes, seconds = divmod(rem, 60)
+        ts = "{:02d}:{:02d}:{:02d}".format(hours, minutes, seconds)
+        f.write(f"{ts} {s[2]}\n")
+        index += end_delta-start_delta
+
         ffmpeg.run(stream)
